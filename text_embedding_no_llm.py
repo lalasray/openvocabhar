@@ -17,6 +17,9 @@ inversion_trainer = vec2text.trainers.InversionTrainer(model=inversion_model,tra
 model.config.dispatch_batches = None
 corrector = vec2text.trainers.Corrector(model=model,inversion_trainer=inversion_trainer,args=None,data_collator=vec2text.collator.DataCollatorForCorrection(tokenizer=inversion_trainer.model.tokenizer),)
 model = SentenceTransformer('sentence-transformers/gtr-t5-base')
-embeddings = model.encode(["A person is running","a person in jumping", "A person is eating", "A person is eating and crying"], convert_to_tensor=True,).to(device)
+embeddings = model.encode(["A person is running","a person in jumping"], convert_to_tensor=True,).to(device)
 text = vec2text.invert_embeddings(embeddings=embeddings,corrector=corrector,num_steps=1,)
+print(text)
+new_embeddig = embeddings.mean(dim=0, keepdim=True).cuda()
+text = vec2text.invert_embeddings(embeddings=new_embeddig,corrector=corrector,num_steps=1,)
 print(text)
